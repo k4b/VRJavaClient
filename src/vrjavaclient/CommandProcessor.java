@@ -96,20 +96,21 @@ public class CommandProcessor {
         System.out.println("");
         System.out.print(">");
     }
+    
 
     private void processCopy(String[] commandTokens)
     {
         System.out.println("Copy");
-//        String srcPath = commandTokens[1];
-//        String destPath = commandTokens[2];
-//        byte[] bytes = File.ReadAllBytes(srcPath);
-//
-//        client.incrementRequestNumber();
-//        Operation operationCopy = new Operation(bytes, destPath);
-//        MessageRequest request = new MessageRequest(1, operationCopy, client.ID, client.requestNumber, client.viewNumber);
-//        System.out.println("Sending:");
-//        System.out.println(request.ToString());
-//        //proxy.startClient();
+        String srcPath = commandTokens[1];
+        String destPath = commandTokens[2];
+        byte[] bytes = FileUtility.readFileToByteArray(new File(srcPath));
+
+        client.incrementRequestsNumber();
+        Operation operationCopy = new Operation(destPath, bytes);
+        MessageRequest request = new MessageRequest(1, client.getClientID(), client.getRequestNumber(), client.getViewNumber(), operationCopy);
+        System.out.println("Sending:");
+        System.out.println(request.toString());
+        //proxy.startClient();
 //        proxy.sendMessage(request);
     }
 

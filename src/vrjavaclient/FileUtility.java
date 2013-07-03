@@ -1,7 +1,9 @@
 package vrjavaclient;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -119,5 +121,17 @@ public class FileUtility {
             PrintWriter out = new PrintWriter(file);
             out.println(text);
             out.close();
+    }
+    
+    public static byte[] readFileToByteArray(File file) {
+        try {
+            byte [] fileData = new byte[(int)file.length()];
+            DataInputStream dis = new DataInputStream(new FileInputStream(file));
+            dis.readFully(fileData);
+            dis.close();
+            return fileData;
+        } catch (IOException e) {
+            return null;
         }
+    }
 }
