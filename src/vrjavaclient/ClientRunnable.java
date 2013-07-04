@@ -4,17 +4,10 @@
  */
 package vrjavaclient;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @author karol
  */
-public class ClientRunnable implements Runnable{
+public class ClientRunnable implements Runnable {
 
     protected String serverAddress;
     protected int serverPort;
@@ -56,6 +49,7 @@ public class ClientRunnable implements Runnable{
             throw new RuntimeException("Error accepting server connection", e);
         }
         System.out.println("Client communication Stopped.") ;
+        System.out.println();
     }
     
     private synchronized boolean isStopped() {            
@@ -72,8 +66,6 @@ public class ClientRunnable implements Runnable{
                 byte[] messageIDBytes = MyByteUtils.toByteArray(messageID);
                 dataOutput.writeInt(messageIDBytes.length);
                 dataOutput.write(messageIDBytes);
-                
-                System.out.println("sent: "+ MyByteUtils.byteArrayToInt(messageIDBytes));
                 
                 byte[] operationIDBytes = MyByteUtils.toByteArray(request.getOperation().getOperationID());
                 dataOutput.writeInt(operationIDBytes.length);
@@ -105,6 +97,8 @@ public class ClientRunnable implements Runnable{
                 dataOutput.flush();
                 
                 //Colecting reply
+                System.out.println("Collecting message...");
+                System.out.println();
                 DataInputStream dataInput = new DataInputStream(clientSocket.getInputStream());
                 int size = dataInput.readInt();
                 byte[] replyIDBytes = new byte[size];
