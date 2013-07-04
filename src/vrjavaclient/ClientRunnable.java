@@ -69,16 +69,16 @@ public class ClientRunnable implements Runnable{
             System.out.println(request.toString());
             try {    
                 DataOutputStream dataOutput = new DataOutputStream(clientSocket.getOutputStream());
-                byte[] messageIDBytes = toByteArray(messageID);
+                byte[] messageIDBytes = MyByteUtils.toByteArray(messageID);
                 dataOutput.writeInt(messageIDBytes.length);
                 dataOutput.write(messageIDBytes);
                 
-                System.out.println("sent: "+ byteArrayToInt(messageIDBytes));
+                System.out.println("sent: "+ MyByteUtils.byteArrayToInt(messageIDBytes));
                 
-                byte[] operationIDBytes = toByteArray(request.getOperation().getOperationID());
+                byte[] operationIDBytes = MyByteUtils.toByteArray(request.getOperation().getOperationID());
                 dataOutput.writeInt(operationIDBytes.length);
                 dataOutput.write(operationIDBytes);
-                byte[] operationPathBytes = toByteArray(request.getOperation().getPath());
+                byte[] operationPathBytes = MyByteUtils.toByteArray(request.getOperation().getPath());
                 dataOutput.writeInt(operationPathBytes.length);
                 dataOutput.write(operationPathBytes);
                 if(request.getOperation().getOperationID() == 1) {
@@ -93,17 +93,16 @@ public class ClientRunnable implements Runnable{
                         dataOutput.write(nullFile);
                     }
                 }
-                byte[] clientIDBytes = toByteArray(request.getClientID());
+                byte[] clientIDBytes = MyByteUtils.toByteArray(request.getClientID());
                 dataOutput.writeInt(clientIDBytes.length);
                 dataOutput.write(clientIDBytes);
-                byte[] requestNumberBytes = toByteArray(request.getRequestNumber());
+                byte[] requestNumberBytes = MyByteUtils.toByteArray(request.getRequestNumber());
                 dataOutput.writeInt(requestNumberBytes.length);
                 dataOutput.write(requestNumberBytes);
-                byte[] viewNumberBytes = toByteArray(request.getViewNumber());
+                byte[] viewNumberBytes = MyByteUtils.toByteArray(request.getViewNumber());
                 dataOutput.writeInt(viewNumberBytes.length);
                 dataOutput.write(viewNumberBytes);
                 dataOutput.flush();
-//                dataOutput.close();
                 
                 //Colecting reply
                 DataInputStream dataInput = new DataInputStream(clientSocket.getInputStream());
@@ -125,10 +124,10 @@ public class ClientRunnable implements Runnable{
                 clientSocket.close();
                 
                 MessageReply reply = new MessageReply(
-                        byteArrayToInt(replyIDBytes),
-                        byteArrayToInt(replyViewNumberBytes),
-                        byteArrayToInt(replyRequestNumberBytes),
-                        byteArrayToBoolean(replyResultBytes));
+                        MyByteUtils.byteArrayToInt(replyIDBytes),
+                        MyByteUtils.byteArrayToInt(replyViewNumberBytes),
+                        MyByteUtils.byteArrayToInt(replyRequestNumberBytes),
+                        MyByteUtils.byteArrayToBoolean(replyResultBytes));
                 
                 System.out.println("Received reply:");
                 System.out.println(reply.toString());
@@ -138,28 +137,5 @@ public class ClientRunnable implements Runnable{
                 Logger.getLogger(ClientRunnable.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }
-    
-    public static byte[] toByteArray(int value) {
-        ByteBuffer buffer = ByteBuffer.allocate(4);
-        //buffer.order(ByteOrder.BIG_ENDIAN); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
-        buffer.putInt(value);
-        byte[] result = buffer.array();
-        return result;
-    }
-    
-    public static byte[] toByteArray(String text) {
-        return text.getBytes();
-    }
-    
-    public static int byteArrayToInt(byte[] bytes) {
-        final ByteBuffer bb = ByteBuffer.wrap(bytes);
-        //bb.order(ByteOrder.LITTLE_ENDIAN);
-        return bb.getInt();
-    }
-    
-    public static boolean byteArrayToBoolean(byte[] bytes) {
-        return (bytes[0]!=0);
-    }
-    
+    }    
 }

@@ -25,7 +25,7 @@ public class Client {
     private int requestNumber;
     private CommandProcessor commandProcessor;
     private VRProxy vrProxy;
-    private MessageProcessor messageProcessor;
+    //private MessageProcessor messageProcessor;
     
     public Client() {
         replicaTable = new ReplicaTable();
