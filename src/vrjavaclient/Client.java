@@ -35,8 +35,8 @@ public class Client {
         viewNumber = 1;
         requestNumber = 0;
         System.out.println(identify());
-        vrProxy = new VRProxy();
-        commandProcessor = new CommandProcessor(this, null);
+        vrProxy = new VRProxy(primary.getIpAddress(), primary.getPort());
+        commandProcessor = new CommandProcessor(this, vrProxy);
         //messageProcessor = new MessageProcessor();
         
         commandProcessor.startProcessing();

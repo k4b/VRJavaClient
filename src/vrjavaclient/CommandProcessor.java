@@ -110,8 +110,7 @@ public class CommandProcessor {
         MessageRequest request = new MessageRequest(1, client.getClientID(), client.getRequestNumber(), client.getViewNumber(), operationCopy);
         System.out.println("Sending:");
         System.out.println(request.toString());
-        //proxy.startClient();
-//        proxy.sendMessage(request);
+        proxy.sendMessage(request);
     }
 
     private void processDelete(String[] commandTokens) 

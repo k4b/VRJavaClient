@@ -12,10 +12,10 @@ public class MessageRequest extends Message {
     
     private static final String NEWLINE = System.getProperty("line.separator");
     
-    int clientID;
-    int requestNumber;
-    int viewNumber;
-    Operation operation;
+    private int clientID;
+    private int requestNumber;
+    private int viewNumber;
+    private Operation operation;
     
     public MessageRequest(int messageID, int clientID, int requestNumber, int viewNumber, Operation operation) {
         this.setMessageID(messageID);
@@ -35,4 +35,38 @@ public class MessageRequest extends Message {
         s += "View number: " + viewNumber + NEWLINE;
         return s;
     }
+
+    public int getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    public int getRequestNumber() {
+        return requestNumber;
+    }
+
+    public void setRequestNumber(int requestNumber) {
+        this.requestNumber = requestNumber;
+    }
+
+    public int getViewNumber() {
+        return viewNumber;
+    }
+
+    public void setViewNumber(int viewNumber) {
+        this.viewNumber = viewNumber;
+    }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
+    
+    
 }
