@@ -72,6 +72,9 @@ public class ClientRunnable implements Runnable{
                 byte[] messageIDBytes = toByteArray(messageID);
                 dataOutput.writeInt(messageIDBytes.length);
                 dataOutput.write(messageIDBytes);
+                
+                System.out.println("sent: "+ byteArrayToInt(messageIDBytes));
+                
                 byte[] operationIDBytes = toByteArray(request.getOperation().getOperationID());
                 dataOutput.writeInt(operationIDBytes.length);
                 dataOutput.write(operationIDBytes);
@@ -83,6 +86,11 @@ public class ClientRunnable implements Runnable{
                     if(operationFile != null) {
                         dataOutput.writeInt(operationFile.length);
                         dataOutput.write(operationFile);
+                    } else {
+                        dataOutput.writeInt(1);
+                        byte[] nullFile = new byte[1];
+                        nullFile[0] = 0;
+                        dataOutput.write(nullFile);
                     }
                 }
                 byte[] clientIDBytes = toByteArray(request.getClientID());
@@ -135,8 +143,7 @@ public class ClientRunnable implements Runnable{
     public static byte[] toByteArray(int value) {
         ByteBuffer buffer = ByteBuffer.allocate(4);
         //buffer.order(ByteOrder.BIG_ENDIAN); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
-        buffer.putInt(0xAABBCCDD);
-
+        buffer.putInt(value);
         byte[] result = buffer.array();
         return result;
     }
