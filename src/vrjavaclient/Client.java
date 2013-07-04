@@ -58,10 +58,10 @@ public class Client {
     private boolean loadParameters() {
         ArrayList<ArrayList<String>> tokenizedLines = FileUtility.loadFile(PARAMETER_FILE_NAME);
         if(tokenizedLines.size() >= 3) {
-            int repID = Integer.valueOf(tokenizedLines.get(0).get(0));
+            int ID = Integer.valueOf(tokenizedLines.get(0).get(0));
             String address = tokenizedLines.get(1).get(0);
             int portNumber = Integer.valueOf(tokenizedLines.get(2).get(0));
-            this.clientID = repID;
+            this.clientID = ID;
             this.ipAddress = address;
             this.port = portNumber;
             return true;

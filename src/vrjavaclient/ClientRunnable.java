@@ -58,13 +58,15 @@ public class ClientRunnable implements Runnable{
         System.out.println("Client communication Stopped.") ;
     }
     
-    private synchronized boolean isStopped() {
+    private synchronized boolean isStopped() {            
         return this.isStopped;
     }
     
     private void sendMessage() {
         if(messageID == 1) {
             MessageRequest request = (MessageRequest) message;
+            System.out.println("Sending message:");
+            System.out.println(request.toString());
             try {    
                 DataOutputStream dataOutput = new DataOutputStream(clientSocket.getOutputStream());
                 byte[] messageIDBytes = toByteArray(messageID);
@@ -78,8 +80,10 @@ public class ClientRunnable implements Runnable{
                 dataOutput.write(operationPathBytes);
                 if(request.getOperation().getOperationID() == 1) {
                     byte[] operationFile = request.getOperation().getFile();
-                    dataOutput.writeInt(operationFile.length);
-                    dataOutput.write(operationFile);
+                    if(operationFile != null) {
+                        dataOutput.writeInt(operationFile.length);
+                        dataOutput.write(operationFile);
+                    }
                 }
                 byte[] clientIDBytes = toByteArray(request.getClientID());
                 dataOutput.writeInt(clientIDBytes.length);
@@ -91,7 +95,7 @@ public class ClientRunnable implements Runnable{
                 dataOutput.writeInt(viewNumberBytes.length);
                 dataOutput.write(viewNumberBytes);
                 dataOutput.flush();
-                dataOutput.close();
+//                dataOutput.close();
                 
                 //Colecting reply
                 DataInputStream dataInput = new DataInputStream(clientSocket.getInputStream());
@@ -107,6 +111,8 @@ public class ClientRunnable implements Runnable{
                 size = dataInput.readInt();
                 byte[] replyResultBytes = new byte[size];
                 dataInput.read(replyResultBytes, 0, size);
+                
+                dataOutput.close();
                 dataInput.close();
                 clientSocket.close();
                 

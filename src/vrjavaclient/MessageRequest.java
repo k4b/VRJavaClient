@@ -17,7 +17,7 @@ public class MessageRequest extends Message {
     private int viewNumber;
     private Operation operation;
     
-    public MessageRequest(int messageID, int clientID, int requestNumber, int viewNumber, Operation operation) {
+    public MessageRequest(int messageID, Operation operation, int clientID, int requestNumber, int viewNumber) {
         this.setMessageID(messageID);
         this.clientID = clientID;
         this.requestNumber = requestNumber;
