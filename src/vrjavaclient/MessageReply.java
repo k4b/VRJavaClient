@@ -50,7 +50,7 @@ public class MessageReply extends Message{
         this.requestNumber = requestNumber;
     }
 
-    public boolean isResult() {
+    public boolean getResult() {
         return result;
     }
 
