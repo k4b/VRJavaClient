@@ -31,7 +31,7 @@ public class CommandProcessor {
 
     public void startProcessing()
     {
-        showHelp();
+//        showHelp();
         while (isRunning)
         {
             askCommand();
@@ -56,6 +56,12 @@ public class CommandProcessor {
 //                    "C:\\hosts.txt",
 //                    "hosts.txt"
 //                };
+                
+                if(commandTokens.length < 3) {
+                    procesWrongCommand();
+                    continue;
+                }
+                
                 processCopy(commandTokens);
             }
             else if (command.equals("delete"))
@@ -65,6 +71,12 @@ public class CommandProcessor {
 //                    "delete",
 //                    "hosts.txt"
 //                };
+                
+                if(commandTokens.length < 2) {
+                    procesWrongCommand();
+                    continue;
+                }
+                
                 processDelete(commandTokens);
             }
             else
@@ -99,13 +111,20 @@ public class CommandProcessor {
         System.out.print(">");
     }
     
+    public void procesWrongCommand() {
+        System.out.println("Wrong command!");
+        System.out.println("help -shows commands");
+        System.out.println("");
+    }
+    
 
     private void processCopy(String[] commandTokens)
     {
         System.out.println("Processing copy.");
         String srcPath = commandTokens[1];
         String destPath = commandTokens[2];
-        byte[] bytes = FileUtility.readFileToByteArray(new File(srcPath));
+//        byte[] bytes = FileUtility.readFileToByteArray(new File(srcPath));
+        byte[] bytes = FileUtility.readFileToByteArray2(new File(srcPath));
 
         client.incrementRequestsNumber();
         Operation operationCopy = new Operation(destPath, bytes);

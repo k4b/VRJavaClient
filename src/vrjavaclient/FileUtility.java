@@ -1,6 +1,7 @@
 package vrjavaclient;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,6 +131,26 @@ public class FileUtility {
             dis.readFully(fileData);
             dis.close();
             return fileData;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+    
+    public static byte[] readFileToByteArray2(File file) {
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            byte[] buf = new byte[1024];
+            
+            for(int readNum; (readNum = fis.read(buf)) != -1;) {
+                bos.write(buf, 0, readNum);
+            }
+            bos.flush();
+            byte[] bytes = bos.toByteArray();
+            fis.close();
+            bos.close();
+            return bytes;
+            
         } catch (IOException e) {
             return null;
         }

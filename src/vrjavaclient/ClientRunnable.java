@@ -95,6 +95,7 @@ public class ClientRunnable implements Runnable {
                 dataOutput.writeInt(viewNumberBytes.length);
                 dataOutput.write(viewNumberBytes);
                 dataOutput.flush();
+//                dataOutput.close();
                 
                 //Colecting reply
                 System.out.println("Collecting message...");
