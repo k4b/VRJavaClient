@@ -34,11 +34,6 @@ public class CommandProcessor {
         showHelp();
         while (isRunning)
         {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(CommandProcessor.class.getName()).log(Level.SEVERE, null, ex);
-            }
             askCommand();
             String line = scanner.nextLine();
             System.out.println();
@@ -55,21 +50,21 @@ public class CommandProcessor {
             }
             else if(command.equals("copy"))
             {
-                commandTokens = new String[]
-                {
-                    "copy",
-                    "C:\\hosts.txt",
-                    "hosts.txt"
-                };
+//                commandTokens = new String[]
+//                {
+//                    "copy",
+//                    "C:\\hosts.txt",
+//                    "hosts.txt"
+//                };
                 processCopy(commandTokens);
             }
             else if (command.equals("delete"))
             {
-                commandTokens = new String[]
-                {
-                    "delete",
-                    "hosts.txt"
-                };
+//                commandTokens = new String[]
+//                {
+//                    "delete",
+//                    "hosts.txt"
+//                };
                 processDelete(commandTokens);
             }
             else

@@ -127,6 +127,8 @@ public class ClientRunnable implements Runnable {
                 System.out.println(reply.toString());
                 
                 
+                
+                
             } catch (IOException ex) {
                 Logger.getLogger(ClientRunnable.class.getName()).log(Level.SEVERE, null, ex);
             }
