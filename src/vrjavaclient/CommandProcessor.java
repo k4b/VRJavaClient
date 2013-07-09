@@ -49,15 +49,8 @@ public class CommandProcessor {
                 showHelp();
             }
             else if(command.equals("copy"))
-            {
-//                commandTokens = new String[]
-//                {
-//                    "copy",
-//                    "C:\\hosts.txt",
-//                    "hosts.txt"
-//                };
-                
-                if(commandTokens.length < 3) {
+            {                
+                if(commandTokens.length != 3) {
                     procesWrongCommand();
                     continue;
                 }
@@ -65,14 +58,8 @@ public class CommandProcessor {
                 processCopy(commandTokens);
             }
             else if (command.equals("delete"))
-            {
-//                commandTokens = new String[]
-//                {
-//                    "delete",
-//                    "hosts.txt"
-//                };
-                
-                if(commandTokens.length < 2) {
+            {                
+                if(commandTokens.length != 2) {
                     procesWrongCommand();
                     continue;
                 }
