@@ -1,6 +1,8 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
+ * Example command:
+ * copy C:\Users\Karol\Documents\VRProjekt\a.txt b.txt
  */
 package vrjavaclient;
 
