@@ -2,8 +2,6 @@ package vrjavaclient;
 
 import java.io.File;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * To change this template, choose Tools | Templates
@@ -17,14 +15,14 @@ import java.util.logging.Logger;
 public class CommandProcessor {
     
     Client client;
-    VRProxy proxy;
+    MessageProcessor messageProcessor;
     boolean isRunning;
     Scanner scanner;
 
-    public CommandProcessor(Client client, VRProxy proxy)
+    public CommandProcessor(Client client, MessageProcessor clientMessageProcessor)
     {
         this.client = client;
-        this.proxy = proxy;
+        this.messageProcessor = clientMessageProcessor;
         isRunning = true;
         scanner = new Scanner(System.in);
     }
@@ -111,12 +109,13 @@ public class CommandProcessor {
         String srcPath = commandTokens[1];
         String destPath = commandTokens[2];
 //        byte[] bytes = FileUtility.readFileToByteArray(new File(srcPath));
-        byte[] bytes = FileUtility.readFileToByteArray2(new File(srcPath));
+//        byte[] bytes = FileUtility.readFileToByteArray2(new File(srcPath));
+        byte[] bytes = MyFileUtils.readFileToByteArray(new File(srcPath));
 
         client.incrementRequestsNumber();
         Operation operationCopy = new Operation(destPath, bytes);
-        MessageRequest request = new MessageRequest(1, operationCopy, client.getClientID(), client.getRequestNumber(), client.getViewNumber());
-        proxy.sendMessage(request);
+        MessageRequest request = new MessageRequest(1, operationCopy, client.getID(), client.getRequestNumber(), client.getViewNumber());
+        messageProcessor.sendMessage(request);
     }
 
     private void processDelete(String[] commandTokens) 
@@ -125,7 +124,7 @@ public class CommandProcessor {
         String destPath = commandTokens[1];
         client.incrementRequestsNumber();
         Operation operationDelete = new Operation(destPath);
-        MessageRequest request = new MessageRequest(1, operationDelete, client.getClientID(), client.getRequestNumber(), client.getViewNumber());
-        proxy.sendMessage(request);
+        MessageRequest request = new MessageRequest(1, operationDelete, client.getID(), client.getRequestNumber(), client.getViewNumber());
+        messageProcessor.sendMessage(request);
     }
 }

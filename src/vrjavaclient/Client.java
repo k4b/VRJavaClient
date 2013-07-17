@@ -12,70 +12,57 @@ import java.util.ArrayList;
  */
 public class Client {
     
-    private static final String PARAMETER_FILE_NAME = "Parameters.txt";
-    private static final String HOSTS_FILE_NAME = "Hosts.txt";
-    private static final String NEWLINE = System.getProperty("line.separator");
-    
-    private int clientID;
-    private String ipAddress;
-    private int port;
+    private int ID;
+    private String serverIpAddress;
+    private int serverPort;
     private ReplicaInfo primary;
     private ReplicaTable replicaTable;
+    private ClientTable clientTable;
     private int viewNumber;
     private int requestNumber;
     private CommandProcessor commandProcessor;
+    private MessageProcessor messageProcessor;
     private VRProxy vrProxy;
     //private MessageProcessor messageProcessor;
     
     public Client() {
         replicaTable = new ReplicaTable();
-        loadParameters();
-        loadHosts();
-        primary = replicaTable.get(0);
-        viewNumber = 1;
-        requestNumber = 0;
+        clientTable = new ClientTable();
+        loadAndSetParameters();
         System.out.println(identify());
-        vrProxy = new VRProxy(primary.getIpAddress(), primary.getPort());
-        commandProcessor = new CommandProcessor(this, vrProxy);
-        //messageProcessor = new MessageProcessor();
         
+        messageProcessor = new MessageProcessor(this);
+        vrProxy = new VRProxy(ID, serverPort, messageProcessor);
+        vrProxy.start();
+        commandProcessor = new CommandProcessor(this, messageProcessor);
         commandProcessor.startProcessing();
     }
     
     private String identify() {
         String s = "";
-        s += "Client App" + NEWLINE;
-        s += "ID: " + clientID + NEWLINE;
-        s += "ipAddress: " + ipAddress + NEWLINE;
-        s += "port: " + port + NEWLINE;
-        s += "Hosts: " + NEWLINE;
+        s += "Client " + ID + Constants.NEWLINE;
+        s += "Server IP: " + serverIpAddress + Constants.NEWLINE;
+        s += "Server port: " + serverPort + Constants.NEWLINE;
+        s += "Hosts: " + Constants.NEWLINE;
         for(ReplicaInfo rep : replicaTable) {
-            s += "Replica[" + rep.getReplicaID() + "] " + rep.getIpAddress() + ":" + rep.getPort() + NEWLINE;
+            s += "Replica[" + rep.getReplicaID() + "] " + rep.getIpAddress() + ":" + rep.getPort() + Constants.NEWLINE;
         }
         return s;
     }
     
-    private boolean loadParameters() {
-        ArrayList<ArrayList<String>> tokenizedLines = FileUtility.loadFile(PARAMETER_FILE_NAME);
-        if(tokenizedLines.size() >= 3) {
-            int ID = Integer.valueOf(tokenizedLines.get(0).get(0));
-            String address = tokenizedLines.get(1).get(0);
-            int portNumber = Integer.valueOf(tokenizedLines.get(2).get(0));
-            this.clientID = ID;
-            this.ipAddress = address;
-            this.port = portNumber;
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    public boolean  testLoadParameters() {
-        return loadParameters();
+    private void loadAndSetParameters() {
+        loadHosts();
+        loadClients();
+        loadParameters();
+        setParameters();
+        
+        primary = replicaTable.get(0);
+        viewNumber = 1;
+        requestNumber = 0;
     }
     
     private boolean loadHosts() {
-        ArrayList<ArrayList<String>> tokenizedLines = FileUtility.loadFile(HOSTS_FILE_NAME);
+        ArrayList<ArrayList<String>> tokenizedLines = MyFileUtils.loadFile(Constants.HOSTS_FILE_NAME);
         if(tokenizedLines.size() > 0) {
             for(int i = 0; i < tokenizedLines.size(); i++) {
                 ArrayList<String> tokens = tokenizedLines.get(i);
@@ -95,32 +82,70 @@ public class Client {
         return loadHosts();
     }
     
+    private boolean loadClients() {
+        ArrayList<ArrayList<String>> tokenizedLines = MyFileUtils.loadFile(Constants.CLIENTS_FILE_NAME);
+        if(tokenizedLines.size() > 0) {
+            for(int i = 0; i < tokenizedLines.size(); i++) {
+                ArrayList<String> tokens = tokenizedLines.get(i);
+                if(tokens.size() >= 2) {
+                    int clientID = i+1;
+                    String address = tokens.get(0);                
+                    int port = Integer.valueOf(tokens.get(1));
+                    clientTable.add(new ClientInfo(clientID, address, port));
+                }
+            }
+        } 
+        boolean result = (clientTable.size() > 0) ? true : false;
+        return result;
+    }
+    
+    private boolean loadParameters() {
+        ArrayList<ArrayList<String>> tokenizedLines = MyFileUtils.loadFile(Constants.PARAMETER_FILE_NAME);
+        if(tokenizedLines.size() >= 1) {
+            int id = Integer.valueOf(tokenizedLines.get(0).get(0));
+            this.ID = id;
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean  testLoadParameters() {
+        return loadParameters();
+    }
+    
+    private void setParameters() {
+        int index = ID-1;
+        this.serverIpAddress = clientTable.get(index).getIpAddress();
+        this.serverPort = clientTable.get(index).getPort();
+    }
+    
     public void incrementRequestsNumber() {
         requestNumber++;
     }
 
-    public int getClientID() {
-        return clientID;
+    public int getID() {
+        return ID;
     }
 
-    public void setClientID(int clientID) {
-        this.clientID = clientID;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
-    public String getIpAddress() {
-        return ipAddress;
+    public String getServerIpAddress() {
+        return serverIpAddress;
     }
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setServerIpAddress(String serverIpAddress) {
+        this.serverIpAddress = serverIpAddress;
     }
 
-    public int getPort() {
-        return port;
+    public int getServerPort() {
+        return serverPort;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
     }
 
     public ReplicaInfo getPrimary() {

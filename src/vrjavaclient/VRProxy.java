@@ -4,39 +4,69 @@
  */
 package vrjavaclient;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 /**
  *
  * @author karol
  */
-public class VRProxy {
+public class VRProxy extends Thread{
     
-    private String severAddress;
+    private int clientID;
+    private boolean isStopped = false;
+    private ServerSocket serverSocket = null;
     private int serverPort;
+    private MessageProcessor messageProcessor;
     
-    public VRProxy(String serverAddress, int serverPort) {
-        this.severAddress = serverAddress;
+    public VRProxy(int clientID, int serverPort, MessageProcessor messageProcessor) {
+        super();
+        this.clientID = clientID;
         this.serverPort = serverPort;
+        this.messageProcessor = messageProcessor;
     }
     
-    public void sendMessage(MessageRequest request) {
-        new Thread(new ClientRunnable(severAddress, serverPort, 1, request)).start();
+    @Override
+    public void run() {
+        LogWriter.log(clientID, "Client server started.") ;
+        openServerSocket();
+        while(! isStopped()){
+            Socket clientSocket = null;
+            try {
+                clientSocket = this.serverSocket.accept();
+            } catch (IOException e) {
+                if(isStopped()) {
+                    LogWriter.log(clientID, "Client server stopped.") ;
+                    return;
+                }
+                throw new RuntimeException("Error accepting replica connection", e);
+            }
+            new Thread(
+                new ServerRunnable(clientID, clientSocket, messageProcessor)
+            ).start();
+        }
+        LogWriter.log(clientID, "Client Stopped.") ;
     }
 
-    public String getSeverAddress() {
-        return severAddress;
+    private synchronized boolean isStopped() {
+        return this.isStopped;
     }
 
-    public void setSeverAddress(String severAddress) {
-        this.severAddress = severAddress;
+    public synchronized void stopServer(){
+        this.isStopped = true;
+        try {
+            this.serverSocket.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Error closing server", e);
+        }
     }
 
-    public int getServerPort() {
-        return serverPort;
-    }
-
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
-    }
-    
-    
+    private void openServerSocket() {
+        try {
+            this.serverSocket = new ServerSocket(serverPort);
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot open port " + serverPort, e);
+        }
+    }    
 }
