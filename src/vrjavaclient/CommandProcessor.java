@@ -108,8 +108,6 @@ public class CommandProcessor {
         System.out.println("Processing copy.");
         String srcPath = commandTokens[1];
         String destPath = commandTokens[2];
-//        byte[] bytes = FileUtility.readFileToByteArray(new File(srcPath));
-//        byte[] bytes = FileUtility.readFileToByteArray2(new File(srcPath));
         byte[] bytes = MyFileUtils.readFileToByteArray(new File(srcPath));
 
         client.incrementRequestsNumber();

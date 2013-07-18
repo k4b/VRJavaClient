@@ -5,6 +5,7 @@
 package vrjavaclient;
 
 import java.util.ArrayList;
+import java.util.Timer;
 
 /**
  *
@@ -23,12 +24,13 @@ public class Client {
     private CommandProcessor commandProcessor;
     private MessageProcessor messageProcessor;
     private VRProxy vrProxy;
-    //private MessageProcessor messageProcessor;
+    private Timer timer;
     
     public Client() {
         replicaTable = new ReplicaTable();
         clientTable = new ClientTable();
         loadAndSetParameters();
+        timer = new Timer();
         System.out.println(identify());
         
         messageProcessor = new MessageProcessor(this);
@@ -178,6 +180,14 @@ public class Client {
 
     public void setRequestNumber(int requestNumber) {
         this.requestNumber = requestNumber;
+    }
+
+    public MessageProcessor getMessageProcessor() {
+        return messageProcessor;
+    }
+
+    public Timer getTimer() {
+        return timer;
     }
     
     

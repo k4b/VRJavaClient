@@ -28,7 +28,9 @@ public class MessageProcessor {
     }
     
     private void processMessage(MessageReply reply) {
-        LogWriter.log(clientID, "Received REPLY:" + Constants.NEWLINE + reply.toString());        
+        LogWriter.log(clientID, "Received REPLY:" + Constants.NEWLINE + reply.toString());
+        client.getTimer().cancel();
+        checkViewChange(reply);
     }
     
     public void sendMessage(MessageRequest request) {
@@ -39,5 +41,27 @@ public class MessageProcessor {
                 1, 
                 request)
         ).start();
-    } 
+        client.getTimer().schedule(new MyTimerTask(client, request), 30*1000);
+    }
+    
+    public void sendToAll(MessageRequest request) {
+        for(ReplicaInfo info : client.getReplicaTable()) {
+            new Thread(new ClientRunnable(
+                    clientID,
+                    info.getIpAddress(),
+                    info.getPort(),
+                    1, 
+                    request)
+            ).start();
+        }
+    }
+    
+    public void checkViewChange(MessageReply reply) {
+        if(client.getViewNumber() != reply.getViewNumber()) {
+            client.setViewNumber(reply.getViewNumber());
+            int index = (reply.getViewNumber()-1) % client.getReplicaTable().size();
+            client.setPrimary(client.getReplicaTable().get(index));
+            LogWriter.log(clientID, "Primary changed.");
+        }
+    }
 }
