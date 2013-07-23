@@ -29,7 +29,7 @@ public class MessageProcessor {
     
     private void processMessage(MessageReply reply) {
         LogWriter.log(clientID, "Received REPLY:" + Constants.NEWLINE + reply.toString());
-        client.getTimer().cancel();
+        client.stopTimeoutChecker();
         checkViewChange(reply);
     }
     
@@ -41,7 +41,7 @@ public class MessageProcessor {
                 1, 
                 request)
         ).start();
-        client.getTimer().schedule(new MyTimerTask(client, request), 30*1000);
+        client.restartTimeoutChecker(request);
     }
     
     public void sendToAll(MessageRequest request) {

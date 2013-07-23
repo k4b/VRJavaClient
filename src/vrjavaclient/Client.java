@@ -25,6 +25,7 @@ public class Client {
     private MessageProcessor messageProcessor;
     private VRProxy vrProxy;
     private Timer timer;
+    private int timeout = 30;
     
     public Client() {
         replicaTable = new ReplicaTable();
@@ -190,6 +191,17 @@ public class Client {
         return timer;
     }
     
+    public void startTimeoutChecker(MessageRequest request) {
+        timer = new Timer();
+        timer.schedule(new ReplyTimeoutTask(this, request), timeout*1000);
+    }
     
+    public void stopTimeoutChecker() {
+        timer.cancel();
+    }
     
+    public void restartTimeoutChecker(MessageRequest request) {
+        stopTimeoutChecker();
+        startTimeoutChecker(request);
+    }
 }

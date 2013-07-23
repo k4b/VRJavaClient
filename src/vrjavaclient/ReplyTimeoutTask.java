@@ -10,12 +10,12 @@ import java.util.TimerTask;
  *
  * @author Karol
  */
-public class MyTimerTask extends TimerTask{
+public class ReplyTimeoutTask extends TimerTask{
     
     Client client;
     MessageRequest request;
     
-    public MyTimerTask(Client client, MessageRequest request) {
+    public ReplyTimeoutTask(Client client, MessageRequest request) {
         super();
         this.client = client;
         this.request = request;
